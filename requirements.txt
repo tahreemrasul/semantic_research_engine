@@ -1,0 +1,12 @@
+sentence-transformers==2.2.2
+torch==2.1.1
+python-dotenv==1.0.0
+chainlit
+langchain
+langchain-openai
+langchain-community
+chromadb
+literalai
+nbconvert
+arxiv
+pymupdf
