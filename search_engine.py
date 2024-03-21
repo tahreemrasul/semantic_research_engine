@@ -1,4 +1,3 @@
-import ast
 import chainlit as cl
 from langchain_community.document_loaders import ArxivLoader
 from langchain_community.vectorstores import Chroma
@@ -13,58 +12,65 @@ load_dotenv()
 
 @cl.on_chat_start
 async def retrieve_docs():
-    llm = OpenAI(model='gpt-3.5-turbo-instruct',
-                 temperature=0)
+    if cl.context.session.client_type == "copilot":
+        llm = OpenAI(model='gpt-3.5-turbo-instruct',
+                     temperature=0)
 
-    # QUERY PORTION
-    arxiv_query = None
+        # QUERY PORTION
+        query = None
 
-    # Wait for the user to ask an Arxiv question
-    while arxiv_query is None:
-        arxiv_query = await cl.AskUserMessage(
-            content="Please enter a topic to begin!", timeout=15).send()
-    query = arxiv_query['output']
+        # Wait for the user to ask an Arxiv question
+        while query is None:
+            query = await cl.AskUserMessage(
+                content="Please enter a topic to begin!", timeout=15).send()
+        arxiv_query = query['output']
 
-    # ARXIV DOCS PORTION
-    arxiv_docs = ArxivLoader(query=query, load_max_docs=1).load()
-    await cl.Message(content=f"We found some useful results online for {query} "
-                             f"Displaying them now!").send()
+        # ARXIV DOCS PORTION
+        arxiv_docs = ArxivLoader(query=arxiv_query, load_max_docs=1).load()
+        # Prepare arXiv results for display
+        arxiv_papers = [
+            f"Published: {doc.metadata['Published']} \n Title: {doc.metadata['Title']} \n Authors: {doc.metadata['Authors']} \n Summary: {doc.metadata['Summary'][:50]}... \n---\n"
+            for doc in arxiv_docs]
 
-    # ARXIV DISPLAY PORTION
-    arxiv_papers = [f"{doc.metadata}" for doc in arxiv_docs]
-    data_dicts = [ast.literal_eval(entry) for entry in arxiv_papers]
-    # Prepare arXiv results for display
-    arxiv_papers = [
-        f"Published: {entry['Published']} \n Title: {entry['Title']} \n Authors: {entry['Authors']} \n Summary: {entry['Summary'][:100]}... \n---\n"
-        for entry in data_dicts]
+        # Trigger popup for arXiv results
+        fn_arxiv = cl.CopilotFunction(name="showArxivResults", args={"results": "\n".join(arxiv_papers)})
+        await fn_arxiv.acall()
 
-    await cl.Message(content=f"{arxiv_papers}").send()
+        await cl.Message(content=f"We found some useful results online for `{arxiv_query}` "
+                                 f"Displaying them in a popup!").send()
 
-    await cl.Message(content=f"Downloading and chunking articles for {query} "
-                             f"This operation can take a while!").send()
+        await cl.Message(content=f"Downloading and chunking articles for `{arxiv_query}` "
+                                 f"This operation can take a while!").send()
 
-    # DB PORTION
-    pdf_data = []
-    for doc in arxiv_docs:
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
-        texts = text_splitter.create_documents([doc.page_content])
-        pdf_data.append(texts)
+        # DB PORTION
+        pdf_data = []
+        for doc in arxiv_docs:
+            text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+            texts = text_splitter.create_documents([doc.page_content])
+            pdf_data.append(texts)
 
-    embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-l6-v2")
-    db = Chroma.from_documents(pdf_data[0], embeddings)
+        embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-l6-v2")
+        db = Chroma.from_documents(pdf_data[0], embeddings)
 
-    # CHAIN PORTION
-    chain = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=db.as_retriever())
+        # CHAIN PORTION
+        chain = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=db.as_retriever())
 
-    # Let the user know that the system is ready
-    await cl.Message(content=f"Database creation for `{query}` complete. You can now ask questions!").send()
+        # Let the user know that the system is ready
+        await cl.Message(content=f"Database creation for `{arxiv_query}` complete. You can now ask questions!").send()
 
-    cl.user_session.set("chain", chain)
+        cl.user_session.set("chain", chain)
 
 
 @cl.on_message
 async def retrieve_docs(message: cl.Message):
-    question = message.content
-    chain = cl.user_session.get("chain")
-    database_results = await chain.acall({"query": question}, callbacks=[cl.AsyncLangchainCallbackHandler()])
-    await cl.Message(database_results['result']).send()
+    if cl.context.session.client_type == "copilot":
+        question = message.content
+        chain = cl.user_session.get("chain")
+        database_results = await chain.acall({"query": question}, callbacks=[cl.AsyncLangchainCallbackHandler()])
+        results = [f"Question: {question} \n Answer: {database_results['result']}"]
+        # Trigger popup for database results
+        fn_db = cl.CopilotFunction(name="showDatabaseResults", args={"results": "\n".join(results)})
+        await fn_db.acall()
+        await cl.Message(content=f"We found some useful results from our database for your question: `{question}`"
+                                 f"Displaying them in a popup!").send()
+
