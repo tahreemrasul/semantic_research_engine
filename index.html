@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Semantic Search Engine</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: sans-serif;
+      }
+
+      .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        font-size: 24px;
+        cursor: pointer;
+      }
+
+      .popup {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: white;
+        padding: 20px;
+        box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+        width: 40%;
+        flex-direction: column;
+        gap: 50px;
+      }
+
+      p {
+        color: #00000099;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Semantic Search Application with Copilot</h1>
+    <div id="popup" class="popup">
+      <span class="close-btn" onclick="hidePopup()">&times;</span>
+      <div class="arxiv-results-wrapper">
+        <h1>Arxiv Results</h1>
+        <p id="arxiv-result-text">arXiv search results will be displayed here.</p>
+      </div>
+      <div class="database-results-wrapper">
+        <h1>Database Results</h1>
+        <p id="database-results-text">responses for paper-related questions will be displayed here.</p>
+      </div>
+    </div>
+
+    <!-- Copilot script and event listeners for showing results -->
+    <script src="http://localhost:8000/copilot/index.js"></script>
+    <script>
+        window.mountChainlitWidget({
+            chainlitServer: "http://localhost:8000",
+        });
+
+      function showPopup() {
+        document.getElementById("popup").style.display = "flex";
+      }
+
+      function hidePopup() {
+        document.getElementById("popup").style.display = "none";
+      }
+
+      window.addEventListener("chainlit-call-fn", (e) => {
+        const { name, args, callback } = e.detail;
+        if (name === "showArxivResults") {
+          document.getElementById("arxiv-result-text").innerHTML =
+            args.results.replace(/\n/g, "<br>");
+          document.getElementById("popup").style.display = "flex";
+          if (callback) callback();
+        } else if (name === "showDatabaseResults") {
+          document.getElementById("database-results-text").innerHTML =
+            args.results.replace(/\n/g, "<br>");
+          document.getElementById("popup").style.display = "flex";
+          if (callback) callback();
+        }
+      });
+    </script>
+  </body>
+</html>
