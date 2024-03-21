@@ -1,2 +1,4 @@
 .env
 /vision transformers
+.DS_Store
+__pycache__/
