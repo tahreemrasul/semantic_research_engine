@@ -3,7 +3,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.chains import RetrievalQA
-from langchain_openai import OpenAI
+from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -23,7 +23,8 @@ def rag(query, question):
     embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-l6-v2")
     db = Chroma.from_documents(pdf_data[0], embeddings)
 
-    llm = OpenAI(model='gpt-3.5-turbo-instruct', temperature=0)
+    llm = ChatOpenAI(model='gpt-3.5-turbo',
+                     temperature=0)
 
     qa = RetrievalQA.from_chain_type(llm=llm,
                                      chain_type="stuff",
