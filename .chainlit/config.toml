@@ -12,7 +12,7 @@ session_timeout = 3600
 # Enable third parties caching (e.g LangChain cache)
 cache = false
 
-# Authorized origins 
+# Authorized origins
 allow_origins = ["*"]
 
 # Follow symlink for asset mount (see https://github.com/Chainlit/chainlit/issues/317)
@@ -28,8 +28,15 @@ unsafe_allow_html = false
 # Process and display mathematical expressions. This can clash with "$" characters in messages.
 latex = false
 
+# Automatically tag threads with the current chat profile (if a chat profile is used)
+auto_tag_thread = true
+
 # Authorize users to upload files with messages
-multi_modal = true
+[features.multi_modal]
+    enabled = true
+    accept = ["*/*"]
+    max_files = 20
+    max_size_mb = 500
 
 # Allows user to use speech to text
 [features.speech_to_text]
@@ -70,6 +77,11 @@ hide_cot = false
 # Specify a custom font url.
 # custom_font = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap"
 
+# Specify a custom build directory for the frontend.
+# This can be used to customize the frontend code.
+# Be careful: If this is a relative path, it should not start with a slash.
+# custom_build = "./public/build"
+
 # Override default MUI light theme. (Check theme.ts)
 [UI.theme]
     #font_family = "Inter, sans-serif"
@@ -94,4 +106,4 @@ hide_cot = false
 
 
 [meta]
-generated_by = "1.0.401"
+generated_by = "1.0.506"
