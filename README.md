@@ -6,6 +6,8 @@ This project demonstrated how to create an observable research paper engine usin
 Software Copilot are a new kind of assistant embedded in your app/product. They are designed to help users get the most out of your app by providing contextual guidance and take actions on their behalf. Here is an overview of the application architecture:
 ![alt text for screen readers](Semantic_Research_Engine.png "Process Diagram for Observable Semantic Research Engine Copilot")
 
+![alt text for screen readers](App_schematic.png "Observable Semantic Research Engine Copilot with Frameworks")
+
 ## Key Features
 
 - Retrieve relevant papers based on user query using the LangChain wrapper for `arXiv` API
@@ -26,6 +28,20 @@ This project leverages the following technologies:
 - [OpenAI](https://openai.com/): Ensures high-speed computations utilizing the GPT-3.5 models.
 - [Chroma](https://github.com/chroma-core/chroma): For creating the vector store to be used  in retrieval.
 
+## Prerequisites
+
+- Python 3.8 or later
+- An OpenAI API key
+- A Literal AI API Key
+
+## Clone the Repository
+Clone this repo using the following commands:
+```
+bash
+git clone git@github.com:tahreemrasul/semantic_research_engine.git
+cd ./semantic_research_engine
+```
+
 ## Environment Setup
 
 ### Conda Environment
@@ -45,11 +61,19 @@ pip install -r requirements.txt
 
 ## Project Structure
 
-- `rag_test.py`: Test script demonstrate building blocks of the pipeline used in the RAG  portion of the application.
+- `rag_test.py`: Test script to demonstrate building blocks of the pipeline used in the RAG  portion of the application.
 - `search_engine.py`: Main script to run the semantic research paper engine with a Chainlit frontend application.
 - `index.html`:  The primary HTML file serving as the user interface for the semantic research paper search engine, embedding the Copilot for an interactive experience.
 
 ## Usage
+
+### .env File
+- Create a .env file in the root directory of the project.
+- Add your OpenAI & Literal AI API keys to the .env file:
+```bash
+OPENAI_API_KEY='Your-OpenAI-API-Key-Here'
+LITERAL_API_KEY='Your-LiteralAI-API-Key-Here'
+```
 
 ### Running the Chatbot with Chainlit Frontend
 The application can be run by first deploying the Chainlit web app. To do this, run:
