@@ -13,8 +13,9 @@ load_dotenv()
 client = LiteralClient()
 
 # This will fetch the champion version, you can also pass a specific version
-prompt = client.api.get_prompt_sync(name="test_prompt")
+prompt = client.api.get_prompt(name="test_prompt")
 prompt = prompt.to_langchain_chat_prompt_template()
+prompt.input_variables = ["context", "question"]
 
 
 @cl.on_chat_start
