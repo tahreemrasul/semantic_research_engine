@@ -1,12 +1,10 @@
 # Observable Semantic Research Paper Engine with Chainlit Copilot, Literal and LangChain
 
-This project demonstrated how to create an observable research paper engine using the arXiv API to retrieve the most similar papers to a user query. The retrieved papers are embedded into a Chroma vector database, based on Retrieval Augmented Generation (RAG). The user can then ask questions from the retrieved papers. The application embeds a Chainlit based Copilot inside the webpage, allowing for a more interactive and friendly user experience. To track performance and observe the application's behavior, the application is integrated with Literal AI, an observability framework. 
+This project demonstrates how to create an observable research paper engine using the arXiv API to retrieve the most similar papers to a user query. The retrieved papers are embedded into a Chroma vector database, based on Retrieval Augmented Generation (RAG). The user can then ask questions from the retrieved papers. The application embeds a Chainlit based Copilot inside the webpage, allowing for a more interactive and friendly user experience. To track performance and observe the application's behavior, the application is integrated with Literal AI, an observability framework. 
 
 ## Copilot
 Software Copilot are a new kind of assistant embedded in your app/product. They are designed to help users get the most out of your app by providing contextual guidance and take actions on their behalf. Here is an overview of the application architecture:
 ![alt text for screen readers](Semantic_Research_Engine.png "Process Diagram for Observable Semantic Research Engine Copilot")
-
-![alt text for screen readers](App_schematic.png "Observable Semantic Research Engine Copilot with Frameworks")
 
 ## Key Features
 
@@ -23,10 +21,12 @@ Software Copilot are a new kind of assistant embedded in your app/product. They 
 This project leverages the following technologies:
 
 - [Chainlit](https://github.com/Chainlit/chainlit): Used for deploying a frontend application for the chatbot, and embedding the copilot.
-- [Literal](https://docs.getliteral.ai/get-started/overview): For creating, optimizing and testing prompts for the RAG pipeline, and for integrating observability features in the app.
+- [Literal AI](https://docs.getliteral.ai/get-started/overview): For creating, optimizing and testing prompts for the RAG pipeline, and for integrating observability features in the app.
 - [LangChain](https://github.com/langchain-ai/langchain): For retrieving arXiv queries, and managing the app's language understanding and generation.
 - [OpenAI](https://openai.com/): Ensures high-speed computations utilizing the GPT-3.5 models.
 - [Chroma](https://github.com/chroma-core/chroma): For creating the vector store to be used  in retrieval.
+
+![alt text for screen readers](App_schematic.png "Observable Semantic Research Engine Copilot with Frameworks")
 
 ## Prerequisites
 
@@ -36,8 +36,7 @@ This project leverages the following technologies:
 
 ## Clone the Repository
 Clone this repo using the following commands:
-```
-bash
+```bash
 git clone git@github.com:tahreemrasul/semantic_research_engine.git
 cd ./semantic_research_engine
 ```
@@ -67,8 +66,8 @@ pip install -r requirements.txt
 
 ## Usage
 
-### .env File
-- Create a .env file in the root directory of the project.
+### `.env` File
+- Create a `.env` file in the root directory of the project.
 - Add your OpenAI & Literal AI API keys to the .env file:
 ```bash
 OPENAI_API_KEY='Your-OpenAI-API-Key-Here'
